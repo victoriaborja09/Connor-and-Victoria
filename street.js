@@ -1,125 +1,136 @@
 /*
- * Connor & Victoria — interactive storefront street
- * Keeps the approved source artwork untouched. Navigation pans and zooms the
- * original image, so no scenery is regenerated, stretched disproportionately,
- * or swapped between locations.
+ * Connor & Victoria — three-store coastal world.
+ * The approved source illustration is never edited or replaced.
+ * One bounded camera moves the artwork, hover areas, and characters together.
  */
 (() => {
   'use strict';
-  const image = document.getElementById('street-image');
+
   const street = document.getElementById('street');
-  const back = document.getElementById('previous');
-  const forward = document.getElementById('next');
-  const toggle = document.getElementById('zoom-toggle');
-  const zoomLabel = document.getElementById('zoom-label');
-  const locationName = document.getElementById('location-name');
-  const locationCount = document.getElementById('location-count');
-  const hotspots = [...document.querySelectorAll('.hotspot')];
   const camera = document.getElementById('camera');
-  const W = 1672, H = 941;
+  const world = document.getElementById('scene-world');
+  const image = document.getElementById('street-image');
+  const toggle = document.getElementById('zoom-toggle');
+  const hotspots = [...document.querySelectorAll('.hotspot')];
+  const W = 1672;
+  const H = 941;
   const stores = [
-    { name: "Connor's Coffee Shop", x: 329, y: 471, box: [115, 198, 458, 610] },
-    { name: "Connor & Victoria's Bookstore", x: 835, y: 463, box: [570, 22, 581, 789] },
-    { name: "Victoria's Hobby Store", x: 1373, y: 470, box: [1162, 130, 485, 679] }
+    { name: "Connor's Coffee Shop", doorwayX: 399, box: [115, 198, 458, 610] },
+    { name: "Connor & Victoria's Bookstore", doorwayX: 880, box: [570, 22, 581, 789] },
+    { name: "Victoria's Hobby Store", doorwayX: 1393, box: [1162, 130, 485, 679] }
   ];
+
+  let overview = true;
   let current = 1;
-  let overview = false;
-  let startPoint = null;
-  let viewportWidth = 0;
-  let viewportHeight = 0;
-  const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
-  if (motionPreference.matches) street.classList.add('no-motion');
+  let resizePending = false;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  // Prevent a flash of the full-size world before its first positioning.
+  street.classList.add('no-motion');
+
+  // If an image covers the viewport, never let any side of it move inside
+  // the viewport edge. This makes the scene behave like a finite world.
+  function contain(requested, worldSize, viewportSize) {
+    if (worldSize <= viewportSize) return (viewportSize - worldSize) / 2;
+    return Math.max(viewportSize - worldSize, Math.min(0, requested));
+  }
 
   function geometry() {
     const w = camera.clientWidth || window.innerWidth;
     const h = camera.clientHeight || window.innerHeight;
     const fit = Math.min(w / W, h / H);
     const cover = Math.max(w / W, h / H);
-    const portrait = w < 720 || (w / h < 0.85);
-    const scale = overview ? fit : cover * (portrait ? 1.0 : (w < 1050 ? 1.38 : 1.63));
-    const px = overview ? W / 2 : stores[current].x;
-    const py = overview ? H / 2 : stores[current].y;
-    return {w,h,scale,left:w/2 - px*scale,top:h/2 - py*scale};
+    const portrait = w / h < 1.3;
+    // A full-street view on portrait screens is intentionally letterboxed
+    // instead of cropping away the coffee and hobby shops.
+    const scale = overview ? (portrait ? fit : cover) : cover * 2.35;
+
+    if (overview) {
+      return {
+        scale,
+        left: (w - W * scale) / 2,
+        top: (h - H * scale) / 2
+      };
+    }
+
+    // Aim at the shop entrance/people rather than the lettering above it.
+    // The camera is clamped so the artwork never exposes an outside edge.
+    const aimX = w / 2 - stores[current].doorwayX * scale;
+    const aimY = h * 0.8 - 875 * scale;
+    return {
+      scale,
+      left: contain(aimX, W * scale, w),
+      top: contain(aimY, H * scale, h)
+    };
   }
 
   function update() {
     const m = geometry();
-    viewportWidth = m.w;
-    viewportHeight = m.h;
-    image.style.width = `${W*m.scale}px`;
-    image.style.height = `${H*m.scale}px`;
-    image.style.left = `${m.left}px`;
-    image.style.top = `${m.top}px`;
+    world.style.transform = `translate3d(${m.left}px, ${m.top}px, 0) scale(${m.scale})`;
     street.classList.toggle('overview', overview);
-    back.hidden = overview || current === 0;
-    forward.hidden = overview || current === 2;
-    zoomLabel.textContent = overview ? 'Zoom in' : 'Zoom out';
-    toggle.setAttribute('aria-label', overview ? 'Zoom in to the bookstore' : 'Zoom out to see all three shops');
-    toggle.setAttribute('title', overview ? 'Return to the bookstore' : 'See the full street');
-    locationName.textContent = stores[current].name;
-    locationCount.textContent = `${current+1} / 3`;
-    hotspots.forEach((el,index)=>{
-      const [x,y,w,h] = stores[index].box;
-      el.style.left = `${m.left+x*m.scale}px`;
-      el.style.top = `${m.top+y*m.scale}px`;
-      el.style.width = `${w*m.scale}px`;
-      el.style.height = `${h*m.scale}px`;
+    toggle.hidden = overview;
+    hotspots.forEach(el => {
       el.tabIndex = overview ? 0 : -1;
       el.setAttribute('aria-hidden', overview ? 'false' : 'true');
     });
   }
 
-  function changeTo(index) {
-    current = Math.max(0,Math.min(stores.length-1,index));
-    overview = false;
-    update();
-  }
+  hotspots.forEach((el, index) => {
+    const [x, y, w, h] = stores[index].box;
+    Object.assign(el.style, {
+      left: `${x}px`,
+      top: `${y}px`,
+      width: `${w}px`,
+      height: `${h}px`
+    });
+    el.addEventListener('click', () => {
+      current = index;
+      overview = false;
+      street.classList.remove('bookstore-enter');
+      update();
+      // Once the camera reaches the bookstore at ground level, the two
+      // characters walk through its doorway and disappear into the shop.
+      if (index === 1 && !reducedMotion.matches) {
+        void street.offsetWidth; // reset animation if the store is revisited
+        street.classList.add('bookstore-enter');
+      }
+    });
+  });
 
-  back.addEventListener('click',()=>changeTo(current-1));
-  forward.addEventListener('click',()=>changeTo(current+1));
-  toggle.addEventListener('click',()=>{
-    if(overview){current=1;overview=false;}else overview=true;
+  toggle.addEventListener('click', () => {
+    overview = true;
+    street.classList.remove('bookstore-enter');
     update();
   });
-  hotspots.forEach(el=>el.addEventListener('click',()=>changeTo(Number(el.dataset.target))));
 
-  window.addEventListener('keydown',event=>{
+  window.addEventListener('keydown', event => {
     if (event.target && /^(INPUT|TEXTAREA|SELECT)$/.test(event.target.tagName)) return;
-    if (event.key==='ArrowLeft') {event.preventDefault();changeTo(overview?0:current-1);}
-    else if (event.key==='ArrowRight') {event.preventDefault();changeTo(overview?2:current+1);}
-    else if (event.key==='Escape' || event.key==='-') {event.preventDefault();overview=true;update();}
-    else if (event.key==='+' || event.key==='=') {event.preventDefault();current=1;overview=false;update();}
-  });
-
-  camera.addEventListener('pointerdown', event=>{
-    if(event.pointerType==='mouse' && event.button!==0) return;
-    startPoint={x:event.clientX,y:event.clientY,time:performance.now()};
-  });
-  camera.addEventListener('pointerup', event=>{
-    if(!startPoint) return;
-    const dx=event.clientX-startPoint.x;
-    const dy=event.clientY-startPoint.y;
-    const origin=startPoint;startPoint=null;
-    if(Math.abs(dx)>55 && Math.abs(dx)>Math.abs(dy)*1.25){
-      if(overview){changeTo(dx>0?0:2);}
-      else changeTo(current+(dx<0?1:-1));
+    if ((event.key === 'Escape' || event.key === '-') && !overview) {
+      event.preventDefault();
+      overview = true;
+      street.classList.remove('bookstore-enter');
+      update();
     }
   });
-  camera.addEventListener('pointercancel',()=>{startPoint=null;});
 
-  let resizePending = false;
-  window.addEventListener('resize',()=>{
-    if(resizePending) return;
-    resizePending=true;
-    requestAnimationFrame(()=>{resizePending=false;update();});
+  window.addEventListener('resize', () => {
+    if (resizePending) return;
+    resizePending = true;
+    requestAnimationFrame(() => {
+      resizePending = false;
+      update();
+    });
   });
 
-  image.addEventListener('error',()=>{
+  image.addEventListener('error', () => {
     image.alt = 'The storefront illustration could not load. Please refresh.';
-    street.style.background='#eecdbb';
+    street.style.background = '#eecdbb';
   });
-  image.addEventListener('load',()=>{
-    if(image.naturalWidth && image.naturalHeight){update();}
-  });
+
   update();
+  if (!reducedMotion.matches) {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => street.classList.remove('no-motion'));
+    });
+  }
 })();

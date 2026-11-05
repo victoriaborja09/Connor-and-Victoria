@@ -1,176 +1,43 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#390d0d" />
-  <meta name="description" content="Connor & Victoria — a little scrapbook of places and plans." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css" />
-  <title>Connor & Victoria</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#edc8bd">
+  <meta name="description" content="Take a stroll through Connor and Victoria's little coastal town.">
+  <title>Connor & Victoria · Our Little Town</title>
+  <link rel="preload" href="./assets/storefront-scene.webp" as="image" type="image/webp">
+  <link rel="stylesheet" href="./street.css">
+  <script src="./street.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#photobooth">Skip to photo booth</a>
-  <main class="scrapbook fabric" id="scrapbook">
-    <section class="hero" aria-label="Connor and Victoria introduction">
-      <div class="hero-inner">
-        <div class="invitation" id="invitation">
-          <div class="invitation-edge" aria-hidden="true"></div>
-          <div class="invitation-paper">
-            <div class="invitation-hairline" aria-hidden="true"></div>
-            <div class="invitation-contents">
-              <p class="handwritten handwritten-top" id="titleLine1">Connor &amp;</p>
-              <p class="handwritten handwritten-bottom" id="titleLine2">Victoria</p>
-              <svg class="racket-sketch" viewBox="0 0 135 155" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                  <ellipse cx="58" cy="46" rx="27" ry="39" transform="rotate(-23 58 46)" stroke-width="2.4"/>
-                  <ellipse cx="58" cy="46" rx="22" ry="34" transform="rotate(-23 58 46)" stroke-width=".9"/>
-                  <path d="M75 83l27 46M68 88l27 46" stroke-width="3"/>
-                  <path d="M98 127l11 17M93 135l10 16M100 138l9-6" stroke-width="3.7"/>
-                  <path d="M41 21l43 49M33 35l52 47M35 53l37 37M47 8l37 67M34 65l49-49M40 81l48-52M55 93l35-49" stroke-width=".8" opacity=".9"/>
-                </g>
-              </svg>
-              <svg class="golf-sketch" viewBox="0 0 150 155" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M43 14l56 110M102 12L50 126" stroke-width="3"/>
-                  <path d="M41 9l5 10M98 9l6 10" stroke-width="4.6"/>
-                  <path d="M99 124q3 12 18 15 11 2 13-5-9-8-17-8Z" fill="#efe5d1" stroke-width="2.4"/>
-                  <path d="M51 125q-2 15-16 16-10 0-15-8 11-9 24-12Z" fill="#efe5d1" stroke-width="2.4"/>
-                  <path d="M62 33l32 76M88 32l-30 76" stroke-width=".7" opacity=".55"/>
-                </g>
-              </svg>
-            </div>
-          </div>
-        </div>
+  <main class="street" id="street" aria-label="Explore Connor and Victoria's three seaside shops">
+    <div class="camera" id="camera" aria-label="Three pastel storefronts on a seaside street at golden hour: Connor's Coffee Shop, Connor and Victoria's Bookstore, and Victoria's Hobby Store">
+      <img id="street-image" class="street-image" src="./assets/storefront-scene.webp" width="1672" height="941" alt="A beautifully detailed coastal street at golden hour, with a pink coffee shop, a blue bookstore and a white hobby store under striped awnings; mountains and the sea behind them." draggable="false">
+      <div class="overview-hotspots" id="hotspots" aria-label="Choose a storefront">
+        <button class="hotspot" type="button" data-target="0" aria-label="Zoom in on Connor's Coffee Shop" title="Connor's Coffee Shop"></button>
+        <button class="hotspot" type="button" data-target="1" aria-label="Zoom in on Connor and Victoria's Bookstore" title="Connor and Victoria's Bookstore"></button>
+        <button class="hotspot" type="button" data-target="2" aria-label="Zoom in on Victoria's Hobby Store" title="Victoria's Hobby Store"></button>
       </div>
-    </section>
-
-    <section class="photobooth-section" id="photobooth" aria-label="Three photograph navigation frames">
-      <div class="photo-stage">
-        <img class="floating-star star-left-top" src="./assets/gold_star_2.webp" alt="" draggable="false" />
-        <img class="floating-star star-right-top" src="./assets/gold_star_1.webp" alt="" draggable="false" />
-        <img class="floating-star star-right-middle" src="./assets/gold_star_4.webp" alt="" draggable="false" />
-        <img class="floating-star star-left-bottom" src="./assets/gold_star_6.webp" alt="" draggable="false" />
-        <img class="floating-star star-right-bottom" src="./assets/gold_star_5.webp" alt="" draggable="false" />
-
-        <div class="photo-strip" id="photoStrip">
-          <a class="photo-frame photo-frame-one" data-frame="0" tabindex="0" aria-label="Photo frame one — destination not set">
-            <span class="frame-photo-area">
-              <span class="frame-paper" aria-hidden="true"></span>
-              <img class="frame-upload" alt="" hidden />
-            </span>
-            <img class="frame-border" src="./assets/photo_frame_1_photo_window.webp" alt="" draggable="false" />
-            <span class="frame-label" hidden></span>
-          </a>
-          <a class="photo-frame photo-frame-two" data-frame="1" tabindex="0" aria-label="Photo frame two — destination not set">
-            <span class="frame-photo-area">
-              <span class="frame-paper" aria-hidden="true"></span>
-              <img class="frame-upload" alt="" hidden />
-            </span>
-            <img class="frame-border" src="./assets/photo_frame_2_photo_window.webp" alt="" draggable="false" />
-            <span class="frame-label" hidden></span>
-          </a>
-          <a class="photo-frame photo-frame-three" data-frame="2" tabindex="0" aria-label="Photo frame three — destination not set">
-            <span class="frame-photo-area">
-              <span class="frame-paper" aria-hidden="true"></span>
-              <img class="frame-upload" alt="" hidden />
-            </span>
-            <img class="frame-border" src="./assets/photo_frame_3_photo_window.webp" alt="" draggable="false" />
-            <span class="frame-label" hidden></span>
-          </a>
-        </div>
-      </div>
-    </section>
+    </div>
+    <nav class="explore" aria-label="Street navigation">
+      <button type="button" class="street-arrow previous" id="previous" aria-label="Previous shop" title="Previous shop">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M20.5 6.5 11 16l9.5 9.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button type="button" class="street-arrow next" id="next" aria-label="Next shop" title="Next shop">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M11.5 6.5 21 16l-9.5 9.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </nav>
+    <button class="zoom-toggle" id="zoom-toggle" type="button" aria-label="Zoom out to see all three shops" title="See the full street">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8.25 3.5H4.5v3.75M15.75 3.5h3.75v3.75M8.25 20.5H4.5v-3.75m11.25 3.75h3.75v-3.75M4.5 3.5l5 5m10-5-5 5m-10 12 5-5m10 5-5-5" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span id="zoom-label">Zoom out</span>
+    </button>
+    <div class="location-chip" id="location-chip" role="status" aria-live="polite">
+      <span class="chip-dot" aria-hidden="true"></span>
+      <span id="location-name">Connor & Victoria's Bookstore</span>
+      <span class="chip-count" id="location-count">2 / 3</span>
+    </div>
+    <span class="swipe-hint" id="swipe-hint" aria-hidden="true">← swipe to explore →</span>
   </main>
-
-  <button class="edit-fab" id="editToggle" aria-expanded="false" aria-controls="editorPanel" title="Edit this page" type="button">
-    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 5 3 3M4 20l4.5-.9L20 7.5a2.1 2.1 0 0 0-3-3L5.4 16.1 4 20Z" /></svg>
-    <span>Edit page</span>
-  </button>
-
-  <div class="panel-overlay" id="panelOverlay" hidden></div>
-  <aside class="editor-panel" id="editorPanel" aria-label="Homepage editor" aria-hidden="true">
-    <div class="editor-header">
-      <div>
-        <p class="editor-eyebrow">Sabbtical Studio</p>
-        <h2>Edit this page</h2>
-      </div>
-      <button class="icon-button close-editor" id="closeEditor" type="button" aria-label="Close editor">×</button>
-    </div>
-    <div class="editor-body">
-      <div class="save-status"><span class="save-dot"></span><span id="saveStatusText">Saved in this browser</span></div>
-      <div class="editor-info">Changes appear immediately. For now, they are saved in this browser, not synced between devices.</div>
-
-      <details class="editor-group" open>
-        <summary>Title <span class="summary-icon">+</span></summary>
-        <div class="group-content">
-          <label for="line1Input">First line</label>
-          <input type="text" id="line1Input" maxlength="45" autocomplete="off" value="Connor &" />
-          <label for="line2Input">Second line</label>
-          <input type="text" id="line2Input" maxlength="45" autocomplete="off" value="Victoria" />
-          <label for="typeSize">Lettering size</label>
-          <input id="typeSize" type="range" min="75" max="120" value="100" />
-        </div>
-      </details>
-
-      <details class="editor-group" open>
-        <summary>Photo booth <span class="summary-icon">+</span></summary>
-        <div class="group-content">
-          <div class="frame-selector" role="group" aria-label="Choose a photo frame">
-            <button type="button" class="frame-select active" data-select="0" aria-pressed="true">1</button>
-            <button type="button" class="frame-select" data-select="1" aria-pressed="false">2</button>
-            <button type="button" class="frame-select" data-select="2" aria-pressed="false">3</button>
-          </div>
-          <p class="frame-edit-caption" id="selectedFrameText">Editing photo 1</p>
-          <label class="upload-zone" for="photoInput" id="uploadZone">
-            <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
-            <span>Choose a photo</span>
-            <small>JPG, PNG, WebP • automatically optimized</small>
-            <input id="photoInput" type="file" accept="image/png,image/jpeg,image/webp" hidden />
-          </label>
-          <button type="button" class="editor-text-button" id="removePhoto">Remove photo</button>
-          <div class="editor-divider"></div>
-          <label for="navLabelInput">Navigation name</label>
-          <input id="navLabelInput" type="text" placeholder="e.g., Our trips" maxlength="50" />
-          <label for="navUrlInput">Destination link</label>
-          <input id="navUrlInput" type="text" placeholder="https://... or #section" />
-          <label class="check-row"><input id="showLabelInput" type="checkbox" /> Display the name on the homepage</label>
-          <div class="editor-divider"></div>
-          <label for="zoomInput">Photo zoom</label>
-          <input type="range" id="zoomInput" min="100" max="220" value="100" />
-          <label for="positionXInput">Photo horizontal position</label>
-          <input type="range" id="positionXInput" min="0" max="100" value="50" />
-          <label for="positionYInput">Photo vertical position</label>
-          <input type="range" id="positionYInput" min="0" max="100" value="50" />
-        </div>
-      </details>
-
-      <details class="editor-group">
-        <summary>Background <span class="summary-icon">+</span></summary>
-        <div class="group-content">
-          <p class="quiet">The original burgundy fabric texture is included. You can replace it with another image later.</p>
-          <label class="upload-zone smaller" for="backgroundInput"><span>Replace fabric texture</span><input id="backgroundInput" type="file" accept="image/png,image/jpeg,image/webp" hidden /></label>
-          <button type="button" class="editor-text-button" id="resetBackground">Restore original fabric</button>
-        </div>
-      </details>
-
-      <details class="editor-group">
-        <summary>Save &amp; transfer <span class="summary-icon">+</span></summary>
-        <div class="group-content">
-          <p class="quiet">Download a copy of your edits, including your pictures. You can import the file on another browser until shared accounts are connected.</p>
-          <button class="editor-action" id="exportBackup" type="button">Download my edits</button>
-          <label class="editor-action secondary-action" for="importBackup">Import saved edits<input id="importBackup" type="file" accept=".json,application/json" hidden /></label>
-          <button class="editor-text-button danger" id="resetAll" type="button">Reset this browser to the original design</button>
-        </div>
-      </details>
-    </div>
-    <div class="editor-footer">
-      <button id="doneEditing" class="done-button" type="button">Done editing</button>
-    </div>
-  </aside>
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="./app.js" defer></script>
 </body>
 </html>

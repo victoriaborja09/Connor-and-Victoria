@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Connor & Victoria · Character Atelier</title>
+    <link rel="stylesheet" href="studio.css" />
+    <script type="importmap">
+      { "imports": { "three": "./vendor/three.module.js" } }
+    </script>
+  </head>
+  <body>
+    <header>
+      <a href="../index.html" aria-label="Return to the town"
+        >C & V <span> / </span> THE ATELIER</a
+      >
+      <div class="status"><i></i> LIVE 3D · DESIGN STUDY 01</div>
+    </header>
+    <main>
+      <section id="stage" aria-label="Interactive 3D character viewport">
+        <div class="stage-heading">
+          <p>OUR LITTLE WORLD / CHARACTER STUDIES</p>
+          <h1>Two familiar faces.</h1>
+          <p class="subtitle">A place to meet, move, and see every side.</p>
+        </div>
+        <canvas
+          id="viewport"
+          aria-label="Drag to orbit Connor and Victoria. Scroll to zoom."
+        ></canvas>
+        <div id="notice" role="status">Preparing the studio…</div>
+        <div class="names">
+          <span>CONNOR <small>01</small></span
+          ><span>VICTORIA <small>02</small></span>
+        </div>
+        <div class="camera-bar">
+          <span>CAMERA</span
+          ><button data-camera="front" class="active">Front</button
+          ><button data-camera="side">Side</button
+          ><button data-camera="back">Back</button>
+          <div class="divider"></div>
+          <button id="zoom-in" aria-label="Zoom in">+</button
+          ><button id="zoom-out" aria-label="Zoom out">−</button
+          ><button id="reset" title="Reset camera and characters">Reset</button>
+        </div>
+        <p class="gesture">
+          DRAG TO ORBIT <span>·</span> SCROLL TO ZOOM <span>·</span> PINCH ON
+          TOUCH
+        </p>
+      </section>
+      <aside>
+        <div class="panel-intro">
+          <span class="eyebrow">MOVEMENT LIBRARY</span>
+          <h2>A little personality.</h2>
+          <p>Choose a character. Give them a moment.</p>
+        </div>
+        <div class="selection" role="group" aria-label="Select characters">
+          <button data-select="both" class="active" aria-pressed="true">
+            Together</button
+          ><button data-select="connor" aria-pressed="false">Connor</button
+          ><button data-select="victoria" aria-pressed="false">Victoria</button>
+        </div>
+        <div class="actions">
+          <button data-action="idle" class="active">
+            <b>01</b
+            ><span
+              >Just being<small
+                >Relaxed breathing & subtle movement</small
+              ></span
+            ><em>Idle</em></button
+          ><button data-action="walk">
+            <b>02</b
+            ><span
+              >On our way<small
+                >Alternating steps & easy arm swings</small
+              ></span
+            ><em>Walk</em></button
+          ><button data-action="wave">
+            <b>03</b
+            ><span
+              >Hello, you<small
+                >A little wave from across the street</small
+              ></span
+            ><em>Wave</em></button
+          ><button data-action="turn">
+            <b>04</b
+            ><span>Every side<small>A smooth, full 360° turn</small></span
+            ><em>Turn</em></button
+          ><button data-action="look">
+            <b>05</b
+            ><span
+              >A shared glance<small
+                >Turn our heads toward each other</small
+              ></span
+            ><em>Look</em></button
+          ><button data-action="enter">
+            <b>06</b
+            ><span
+              >Meet me inside<small
+                >Turn & walk through a studio doorway</small
+              ></span
+            ><em>Enter</em>
+          </button>
+        </div>
+        <div class="turn-tools">
+          <button id="half-turn">Turn 180°</button
+          ><button id="export">↓ Export GLB</button>
+        </div>
+        <div class="character-state">
+          <span id="connor-state">Connor · Idle</span
+          ><span id="victoria-state">Victoria · Idle</span>
+        </div>
+        <div class="note">
+          <span class="eyebrow">A WORK IN SCULPTURE</span>
+          <p>
+            Procedural geometry study. Inspect the face, hair and clothing from
+            every angle. This is a review version, awaiting your approval.
+          </p>
+          <label
+            ><input type="checkbox" id="wireframe" /> Show mesh topology</label
+          >
+        </div>
+        <footer>
+          Made for our next adventure.<span
+            >LOCAL GEOMETRY · NO CLOUD SERVICES</span
+          >
+        </footer>
+      </aside>
+    </main>
+    <script type="module" src="studio.js"></script>
+  </body>
+</html>

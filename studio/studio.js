@@ -45,7 +45,7 @@ key.shadow.camera.left = -5;
 key.shadow.camera.right = 5;
 key.shadow.camera.top = 6;
 key.shadow.camera.bottom = -5;
-key.shadow.normalBias = 0.025;
+key.shadow.normalBias = 0.006;
 key.shadow.bias = -0.0001;
 key.shadow.radius = 4;
 scene.add(key);

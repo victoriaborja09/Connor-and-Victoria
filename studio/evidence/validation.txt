@@ -1,0 +1,7 @@
+Loaded studio
+Captured camera views
+PASS GLB re-import, skeletons, animation playback and finite model bounds
+PASS desktop, independent actions, skeletal poses, 180/360 turns, look, enter, GLB export
+GLB bytes: 24421700 animations: 12
+Render: {'triangles': 744536, 'calls': 68}
+PASS mobile layout, inactive town adapter mount, preserved zoom, disposal; no browser errors

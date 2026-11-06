@@ -1,58 +1,70 @@
-# Connor & Victoria — character atelier
+# Connor & Victoria — character studio
 
-Standalone, genuinely three-dimensional **procedural review study**, not an approved likeness. Original storefront HTML, CSS, JavaScript and artwork are unchanged. No character images, image planes, paid assets, model APIs or network services are used.
+The current character surfaces are authored in **Blender 4.3**, then loaded into the existing Three.js studio and attached to its original independent 17-bone skeletons. This is a visual rebuild of the character models. The studio UI, orbit/zoom controls, action library and production storefront are preserved.
 
-## Run
+## Run and inspect
 
-From the repository root: `python3 -m http.server 8000`. Open the `/studio/` path on that server. Python 3 is the only server prerequisite; all browser dependencies are vendored (Three.js 0.170.0, MIT, license in `vendor/`). WebGL is required. Use Front / Side / Back, drag to orbit, scroll or pinch to zoom. Together / Connor / Victoria chooses which characters receive actions. Reset restores both models and the camera. Reduced-motion preferences suppress automatic idle motion.
+Serve the repository root with `python3 -m http.server 8000` and open `/studio/`. No bundler, CDN, account, paid API or browser dependency installation is required. Three.js 0.170.0 is vendored under its MIT license. A WebGL-capable browser is required.
 
-## Review status and visual limitations
+- `evidence/sculpt-front.png`: clean full-body browser render.
+- `evidence/sculpt-three-quarter.png`, `sculpt-side.png`, `sculpt-back.png`: geometry viewed from other angles.
+- `evidence/sculpt-faces.png`: close-up of the facial geometry.
+- `evidence/before-after.png`: previous versus rebuilt geometry under the same review camera.
+- `evidence/REFERENCE-COMPARISON.md`: initial discrepancy analysis, reference comparisons and remaining visual limitations.
 
-The supplied reference is the design source: Connor is taller, with tousled brown hair, rectangular black glasses, white tee, brown loose jeans and brown striped sneakers; Victoria has long centre-parted brown hair, brown glasses, navy long sleeves, pale loose denim, green striped sneakers and a gold necklace.
+These are real WebGL renders of the meshes. The review images are not textures used on the characters. The source reference is not embedded or projected onto the geometry.
 
-Front, side and back browser renders were inspected during multiple geometry passes. Changes included interpolating clothing cross-sections, extending the necks through the collars, closing shoulder transitions, adjusting eyes, extending Connor's rear hair coverage, adding waves to Victoria's rear hair and correcting fringe occlusion. These are still procedural approximations. The likeness, facial softness, asymmetrical hair shapes, realistic cloth drape, tortoiseshell variation and sneaker detailing are **not at the reference's production quality**. Hair remains visibly strand-based; faces are relatively simple. No hand-sculpted reference-accurate likeness is claimed. The current mesh topology is suitable for further editing, not a finished artist retopology pass. Store entry uses a studio doorway; it is not an approved production integration.
+## Blender pipeline
 
-## Geometry and rig
+`blender/rebuild.py` reproducibly authors the meshes with a fixed random seed. Run from the repository root:
 
-`models.js` builds each character independently. Body, neck, clothing, palms and fingers use triangulated, interpolated cross-section meshes. The face has shaped cranium, cheek, jaw and chin sections, plus a mesh nose, eyelids, lips, eye geometry, ears and wrapping glasses temples. Eyes are curved surfaces; they are not sprites. Tapered swept locks and filaments form the hairstyles. Jeans have deterministic local denim textures, seams, pockets, fly and belt loops. Sneakers have shaped uppers, soles, laces and three side stripes. No intentional branded logos are included.
+```bash
+blender -b -t 4 --python studio/blender/rebuild.py
+```
 
-Each character has a **17-bone skeleton**: hips, spine, chest, neck, head, two upper arms / forearms / hands, and two thighs / shins / feet. Clothing and exposed arms are skinned with two-bone blending. Rigid face, hair, shoe and hand geometry is attached to the corresponding bone. Material batching combines rigid geometry on each bone to reduce draw calls. Fingers are shaped meshes but are not individually rigged. There is no foot IK, cloth simulation, blink rig, facial morph system or physics hair simulation. Motion is authored analytically, including arm lift, elbow bend, wrist wave, alternating hip/knee motion, posture shifts, head turns and smooth root turns. Walking is in place in the studio; entry adds root translation. Fully natural gait remains an animation refinement task.
+Outputs:
 
-## JavaScript API
+- `assets/character-sculpt.blend`: compressed editable Blender source, grouped by character and attachment role.
+- `assets/character-surfaces.glb`: mesh/material source used by the browser, including embedded denim textures.
+- `assets/connor-and-victoria-study.glb`: portable, rigged export with the original 12 animation clips, generated by the existing studio export button or browser regression test.
+
+The Blender source contains the editable surfaces; the existing browser rig supplies the skeleton and animation at runtime. Do not confuse the surface-source GLB with the final rigged GLB. Custom properties `character` and `role` identify the attachment/weighting group when re-exporting edited source meshes. Both characters share a bind-space origin in the source file; isolate objects by their character name/property while editing. The existing studio places them side by side.
+
+The faces are closed subdivided quad surfaces with integrated brow, eye-socket, cheek, bridge, nose-tip, muzzle and chin displacements. Recessed almond-shaped eye surfaces follow the facial surface at their edges. Eyelids, lips, ears, wrapping glasses and seated fine stubble are actual geometry. Vertex colors provide skin complexion, restrained cheek color and brown iris detail. They are not projected photographs.
+
+Hair uses continuous scalp surfaces and layered curved meshes with broad, flattened cross-sections. Connor's curved locks are embedded at their roots and tips; Victoria has centre-parted crown layers, face-framing waves, temple layers and an S-shaped rear curtain. Material variation and fine geometric striations provide depth. Hair is rigidly attached to the original head bone.
+
+Shirt torso and sleeves are voxel-unioned, relaxed, subdivided and reduced to join the shoulders naturally. Arms and palms are joined while fingers remain separate curved surfaces. Jeans use a joined pelvis and two shaped legs with asymmetric radial compression folds, a low-rise waistband, seams, pocket surfaces, stitching, fly, loops and button. Woven denim textures are baked and embedded. Sneakers have layered soles, toe seams, tongues, laces and curved side stripes. Victoria's chain and pendant remain dimensional geometry.
+
+## Original rig and actions
+
+`models.js` loads the Blender surfaces, constructs the same original 17 bones at the same rest positions, attaches head/neck/shoe/accessory meshes to their existing bones and assigns skin weights to clothing, arms and legs. The public API remains:
 
 ```js
-import {createCharacter, setAction, animateCharacter} from './models.js';
-const connor = createCharacter('connor');
-const victoria = createCharacter('victoria');
+import { createCharacter, setAction, animateCharacter } from "./models.js";
+const connor = createCharacter("connor");
+const victoria = createCharacter("victoria");
 scene.add(connor.root, victoria.root);
-setAction(connor, 'wave', elapsedSeconds);
-// Every animation frame, with monotonically increasing seconds:
-animateCharacter(connor, elapsedSeconds, victoria);
+setAction(connor, "wave", elapsedSeconds);
+animateCharacter(connor, elapsedSeconds, victoria); // each frame
 ```
 
-Actions: `idle`, `walk`, `wave`, `turn`, `look`, `enter`. A full turn defaults to 360°; after setting `turn`, set `character.turnTo = character.turnFrom + Math.PI` for 180°. State and objects are independent. `window.characterStudio` exposes the studio's renderer, models and controls for inspection and tests.
-
-## GLB
-
-The Export GLB button packages both meshes, embedded denim textures, two independent skeletons and **12 named animation clips** into a glTF 2.0 binary. Clips are sampled at 30 Hz from the same bone poses used live. Each character's idle / walk / wave / turn / look / enter clips are separate; play the selected character's clip rather than every clip simultaneously. The sampled look direction is authored for the default adjacent placement. Scene lighting, camera and floor are deliberately excluded. Stubble points and fine hair filaments may appear differently in external viewers. `assets/connor-and-victoria-study.glb` is the tested export, when generated by the browser test. Export is a portable review asset, not an approval of likeness.
-
-## Inactive town integration
-
-`town-adapter.js` exports `attachTownCharacters(world, options)`. It is **not imported by the production site**. It adds a transparent, pointer-transparent WebGL canvas inside the existing 1672 × 941 `#scene-world`, so the established camera transform scales and moves it with the artwork. The default anchor is the existing bookstore doorway (x=880, floor y=875); `pixelsPerMetre` controls model size. No storefront asset or zoom math is changed. Import-map setup must resolve `three` to `/studio/vendor/three.module.js` in the host page.
-
-```js
-const overlay = attachTownCharacters(document.querySelector('#scene-world'));
-overlay.play('both', 'wave');
-overlay.play('connor', 'enter');
-overlay.setAnchor(880, 875);
-// On teardown:
-overlay.dispose();
-```
-
-A depth clipping plane hides characters moving behind the doorway surface. The illustrated doorway needs an artist-reviewed mask and final alignment before production. The current illustrated SVG characters remain in production and would need an explicitly approved replacement when integration is activated. The adapter test mounts and removes the overlay only in an isolated browser document.
+The module loads its local source GLB before exposing the synchronous construction API. `setAction` and `animateCharacter` retain the existing actions: `idle`, `walk`, `wave`, `turn`, `look`, `enter`. No animation clips or controls were added. GLB export samples the same live animation functions at 30 Hz, yielding six named clips for each character. Play an individual character's clip rather than all clips simultaneously.
 
 ## Verification
 
-Run `python3 studio/tests/browser.py` with the server running. Requires Python Playwright and `/usr/bin/chromium` in this prepared environment. Optional `STUDIO_TEST_URL` overrides the origin. It tests independent action dispatch, weighted skeleton geometry, actual articulated poses, full and half turns, facing each other, completed entry, binary GLB structure, re-import and animation playback, mobile overflow, and inactive overlay mounting / existing zoom / disposal. It captures front, side, back, wave, walk and mobile evidence to `evidence/`. Screenshots are evidence for manual review, not an automated likeness score. Software-rendered Chromium validates functionality; real desktop/mobile GPU performance still needs device testing.
+With the server running:
 
-Useful checks: `node --check studio/models.js`, `node --check studio/studio.js`, `node --check studio/town-adapter.js`. No build step. Do not deploy or merge without visual approval.
+```bash
+python3 studio/tests/browser.py
+python3 studio/tests/render_views.py
+node --check studio/models.js
+```
+
+The browser tools require Python Playwright and Chromium (`/usr/bin/chromium`) in the prepared cloud environment. `STUDIO_TEST_URL` can override the server origin. The regression suite checks the existing independent actions, articulated bone poses, turns, gaze, entry, weighted geometry, binary GLB export and re-import/playback, mobile layout and inactive town-adapter behavior. The view script captures actual WebGL pixels with a test-only orthographic camera; it adds no camera presets or controls to the app.
+
+## Integration and limits
+
+The original `town-adapter.js` remains inactive in production. It still mounts a transparent layer inside the established world transform; no storefront illustration, building location, site layout or zoom math is changed. Production activation still requires approval and an artist-reviewed doorway mask/alignment.
+
+The models remain approximations of the supplied reference, not an approved personal likeness. Hair still has visible procedural structure, facial likeness needs individual sculpting, and the garments do not reproduce every reference fold. Real-time glTF shading does not reproduce the reference's offline film-style skin/hair rendering. There is no new facial rig, hair simulation, cloth simulation, IK or finger animation. Physical phone/GPU performance has not been benchmarked; the browser regression is not a mobile performance claim.

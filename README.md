@@ -2,21 +2,15 @@
 
 An interactive, editable scrapbook landing page built with **HTML, CSS, and JavaScript**, matching the user's original reference photos. No bundler, design subscription, or AI credits needed.
 
-## New: playable 3D coastal town (preview)
+## Playable illustrated boardwalk (preview)
 
-**Open `world3d.html`** alongside the existing approved `index.html`. The original page and `assets/storefront-scene.webp` are unchanged. On GitHub Pages the preview route is `/Connor-and-Victoria/world3d.html`.
+Open `world3d.html` (or `/Connor-and-Victoria/world3d.html` on GitHub Pages). This preview preserves the original `assets/storefront-scene.webp` **pixel for pixel**, including all three storefronts, signage, awnings, mountains, and sea. The artwork is a fixed perspective, not a freely rotating 3D environment.
 
-This is an actual **Three.js/WebGL** world with 3D mesh storefronts and animated 3D characters, not a flat background with SVG overlays. It includes:
+Victoria and Connor are **real, animated Three.js 3D meshes** composited over the original illustration. Use **left/right arrows** or **A/D** to walk along the bounded boardwalk, and use the on-screen left/right buttons on touchscreens. The other character follows. **View town** reveals the full original illustration; **Return to street** returns to the walkable close-up. Switch between the characters using the top-right control. Approach a store and press **E** or click **Explore** to open its placeholder content. In overview, the three storefronts can be clicked directly.
 
-- Three modeled seaside shops, stone-paved plaza, ocean and hills, signs and 3D storefront props.
-- Play as Victoria or Connor, with the other character following; animated legs/arms, facial details, hair and necks.
-- **WASD / arrows** to walk, **Shift** to walk faster, **Space** to jump, **drag** to rotate the third-person camera, **scroll** to zoom.
-- On-screen directional buttons on touch devices, **View town** / **Return to street**, and clickable store fronts. Walk to a doorway and press **E** or tap **Explore** to open its content panel.
-- Bounded movement and responsive viewing; browser-only and no game server.
+The 3D avatars are early prototypes and not yet a final artistic match to the illustrated town. The storefronts are **not 3D meshes**: this is an intentional 2.5D composition to preserve the original design. No interior has been implemented yet. The original `index.html` and its existing street navigation remain unchanged. The page loads version-pinned Three.js from jsDelivr and needs WebGL/network access.
 
-The 3D buildings use the original scene's **three-shop arrangement and color palette**, but are a newly constructed geometry interpretation, not a pixel-exact model of the 2D illustration. Shop interiors and travel content are intentionally placeholders. The UI links back to the original. Three.js is loaded from the version-pinned jsDelivr CDN and requires WebGL and network access.
-
-To preview locally, serve the folder with `python3 -m http.server 8000` and visit `http://localhost:8000/world3d.html`. No bundler needed.
+To preview locally, run `python3 -m http.server 8000` and visit `http://localhost:8000/world3d.html`.
 
 ## Run locally
 

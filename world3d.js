@@ -205,7 +205,7 @@ function addStore(data, i) {
   box(g,10.2,.20,.50,0,3.38,front+.18,palette.trim);
   // Second-story windows and tiny balconettes
   [-3.12,0,3.12].forEach(x=>{
-    framedWindow(g,x,6.05,front+.24,1.58,1.65,palette.ivory,true);
+    framedWindow(g,x,6.34,front+.24,1.58,1.46,palette.ivory,true);
     box(g,1.85,.12,.48,x,5.03,front+.5,dark);
   });
   // Lower shopfront, windows, and walk-in door
@@ -276,7 +276,7 @@ stores.forEach(addStore);
 const ground = mat('#d5c0a7');
 box(scene,39,.75,27,0,-.43,4.1,ground,false);
 box(scene,39,.3,1.25,0,.02,-6.3,palette.earth,false);
-const pavement = ['#dbc9af','#e6d3bb','#d2bca5','#e5cfb5','#d9c3ac','#ddc7b2'];
+const pavement = ['#dbc9af','#e6d3bb','#d2bca5','#e5cfb5','#d9c3ac','#ddc7b2'].map(color => mat(color));
 let seed = 42;
 function random(){seed=(1664525*seed+1013904223)>>>0;return seed/4294967296}
 for(let row=0;row<19;row++){
@@ -284,7 +284,7 @@ for(let row=0;row<19;row++){
   for(let col=0;col<26;col++){
     const x = -18.7+col*1.49+(row%2)*.74;
     if(x>18.5)continue;
-    const stone = box(scene,1.46,.055,.88,x,-.016,z,mat(pavement[Math.floor(random()*pavement.length)]),false);
+    const stone = box(scene,1.46,.055,.88,x,-.016,z,pavement[Math.floor(random()*pavement.length)],false);
     stone.receiveShadow=true;
   }
 }
@@ -509,11 +509,6 @@ function updateMovement(dt,t){
   x=(Math.sin(cameraYaw)*forward+Math.cos(cameraYaw)*sideways);
   z=(-Math.cos(cameraYaw)*forward+Math.sin(cameraYaw)*sideways);
   let moving=false;
-  if(autoWalk && !overview){
-    const dx=autoWalk.x-player.root.position.x,dz=autoWalk.z-player.root.position.z;
-    const len=Math.hypot(dx,dz);
-    if(len>.15){x=dx/len;z=dz/len}else{autoWalk=null;openStore(autoWalk?.storeIndex??near)}
-  }
   if((x!==0||z!==0)&&!overview&&!dialog.open){
     const length=Math.hypot(x,z);
     x/=length;z/=length;

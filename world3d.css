@@ -10,14 +10,7 @@
 @media(max-height:530px){.intro{top:55%;padding:18px 23px}.intro h1{font-size:35px;margin:8px 0}.intro p{font-size:12px;margin-bottom:11px}.world-header{padding:10px 13px}.top-actions{top:55px}.credit{display:none}.store-hint{bottom:66px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
-/* Illustration-first boardwalk: no generated replacement buildings. */
-.art-world{position:absolute;left:0;top:0;width:1672px;height:941px;transform-origin:0 0;will-change:transform;transition:transform 200ms linear}
-.original-art{position:absolute;inset:0;width:1672px;height:941px;max-width:none;display:block;user-select:none;pointer-events:none}
-.avatar-layer{position:absolute;inset:0;pointer-events:none;z-index:2}
-.avatar-layer canvas{display:block;width:1672px!important;height:941px!important;pointer-events:none}
-.art-hotspot{position:absolute;z-index:3;border:0;background:transparent;cursor:pointer;opacity:0}
-.art-hotspot:hover,.art-hotspot:focus-visible{opacity:1;outline:4px solid rgba(255,249,227,.82);outline-offset:-5px;background:rgba(255,255,255,.055)}
-.art-hotspot[hidden]{display:none!important}
-.viewport{cursor:default;touch-action:pan-y}
-.vignette{pointer-events:none}
-@media(max-width:800px){.touch-controls{display:flex}.touch-controls>button[data-move="up"],.touch-controls button[data-move="down"]{display:none}.touch-controls>div{gap:12px}.touch-controls button[data-move="left"],.touch-controls button[data-move="right"]{width:66px;height:60px}.touch-controls>div button[data-move="down"]{display:none}}
+
+/* The storefront illustration is rendered as a world-space 3D facade, not DOM art. */
+.viewport{touch-action:none;cursor:grab}.viewport:active{cursor:grabbing}
+@media(max-width:800px){.touch-controls{display:flex}}

@@ -2,9 +2,9 @@ import * as THREE from 'three';
 
 /*
  * Connor & Victoria's little world
- * A bounded perspective Three.js boardwalk with actual 3D characters,
- * textured 3D ground, and camera pitch/yaw. The exact original storefront
- * artwork is projected onto a front-only facade; no invented building backs.
+ * A real 3D street with individually modeled storefronts, window recesses,
+ * awnings, doors, sculpted trim and an explorable boardwalk. The approved
+ * original illustration is the art direction, never a flat image in scene.
  */
 const $ = (selector) => document.querySelector(selector);
 const viewport = $('#viewport');
@@ -40,7 +40,7 @@ viewport.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color('#cfdfda');
-scene.fog = null;
+scene.fog = new THREE.Fog('#d7d7c9', 70, 145);
 const camera = new THREE.PerspectiveCamera(54, viewport.clientWidth / viewport.clientHeight, 0.12, 200);
 camera.position.set(0, 24, 39);
 const target = new THREE.Vector3(0, 3.3, -8.7);
@@ -183,33 +183,145 @@ const stores = [
   {name:"Connor & Victoria's Bookstore", short:'Bookstore', x:0, front:-7.6, wall:'#8ab4c6', darker:'#658a9a', awning:'#88aab1', roof:'#b5786b', sign:["CONNOR & VICTORIA'S", "BOOKSTORE"], description:"Our collection of adventures, travel journals, photographs, and the places that changed us."},
   {name:"Victoria's Hobby Shop", short:'Hobby shop', x:11.3, front:-7.6, wall:'#eee4d2', darker:'#8a9b85', awning:'#bb8e8a', roof:'#b27b69', sign:["VICTORIA'S", "HOBBY SHOP"], description:"A little home for the things we love making, collecting, and learning along the way."}
 ];
-// The original approved illustration is the complete visible architecture.
-// It is mounted on a world-space facade; the walkable boardwalk, characters,
-// lights and camera are all real perspective 3D. No building backs are needed.
-const clickable=[];
-const sourceArt=new THREE.TextureLoader().load('./assets/storefront-scene.webp',()=>{
-  fallback.classList.add('ready');
-},undefined,()=>{$('#fallback-status').textContent='Could not load the original storefront artwork.'});
-sourceArt.colorSpace=THREE.SRGBColorSpace;
-sourceArt.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
-const facade=new THREE.Mesh(
- new THREE.PlaneGeometry(40,22.51),
- new THREE.MeshBasicMaterial({map:sourceArt,side:THREE.DoubleSide,depthWrite:true,toneMapped:false})
-);
-// The illustrated shopfronts sit directly behind the 3D boardwalk.
-facade.position.set(0,10.15,-8.15);
-scene.add(facade);
-// Small door volumes supply collision and clicking without covering the artwork.
-stores.forEach((store,i)=>{
- const door=new THREE.Mesh(
-   new THREE.BoxGeometry(2.7,3.8,.24),
-   new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false})
- );
- door.position.set(store.x,1.95,-7.86);
- door.userData.storeIndex=i;
- scene.add(door);
- clickable.push(door);
-});
+const clickable = [];
+function addStore(data, i) {
+  const g = new THREE.Group();
+  g.position.x = data.x;
+  scene.add(g);
+  const wall = mat(data.wall);
+  const dark = mat(data.darker);
+  const front = data.front, mid = front-3.3;
+  const base = box(g,10.1,7.7,2.15,0,3.85,front-1.1,wall);
+  base.userData.storeIndex = i;
+  clickable.push(base);
+  box(g,10.3,.52,2.28,0,.26,front-1.1,palette.trim);
+  // Corners, layered cornices, and a stone foundation
+  [-4.87,4.87].forEach(x=>{
+    box(g,.28,7.15,.36,x,4.05,front+.12,palette.trim);
+    box(g,.55,.40,.48,x,6.45,front+.20,palette.trim);
+  });
+  box(g,10.32,.26,.51,0,4.38,front+.17,palette.ivory);
+  box(g,10.35,.21,.57,0,7.46,front+.16,palette.ivory);
+  box(g,10.2,.20,.50,0,3.38,front+.18,palette.trim);
+  // Second-story windows and tiny balconettes
+  [-3.12,0,3.12].forEach(x=>{
+    framedWindow(g,x,6.34,front+.24,1.58,1.46,palette.ivory,true);
+    box(g,1.85,.12,.48,x,5.03,front+.5,dark);
+  });
+  // Lower shopfront, windows, and walk-in door
+  framedWindow(g,-3.16,2.06,front+.27,2.15,2.22,palette.darkWood,false);
+  framedWindow(g,3.16,2.06,front+.27,2.15,2.22,palette.darkWood,false);
+  box(g,2.38,3.25,.33,0,1.85,front+.24,palette.darkWood);
+  box(g,1.96,2.95,.1,0,1.82,front+.45,mat('#a7b9ba',.24,{metalness:.03,transparent:true,opacity:.82}),false);
+  box(g,.11,2.97,.19,0,1.83,front+.52,palette.darkWood);
+  box(g,2.02,.12,.16,0,1.78,front+.55,palette.darkWood);
+  sphere(g,.082,.71,1.77,front+.56,palette.gold);
+  box(g,2.63,.18,.75,0,.20,front+.49,palette.earth);
+  const shadeWidth = 9.38;
+  awning(g,shadeWidth,3.59,front+1.05,data.awning);
+  sign(g,0,4.80,front+.32,6.4,data.sign,i===1?'#4c6770':'#684d42');
+  roofGable(g,10.55,2.6,7.78,front-1.12,data.roof);
+  // Roof ridge and end accents
+  box(g,2.7,.10,.17,0,9.48,front-1.12,palette.terracotta);
+  // Three-dimensional painted cornices, columns, keystones, window arches.
+  const plaster=mat(i===1?'#f6ebdc':'#f5e7d8');
+  const warmTrim=mat(i===1?'#d8e8e4':'#f4d9c7');
+  for(const x of [-4.87,4.87]){
+    for(const y of [1.15,3.65,5.15,7.10]){
+      box(g,.54,.22,.62,x,y,front+.32,plaster);
+    }
+    cylinder(g,.13,.13,6.55,x,3.9,front+.33,plaster,12);
+  }
+  for(const x of [-3.12,0,3.12]){
+    // Arched plaster surround around every upstairs window, not flat paint.
+    const arch=new THREE.Mesh(new THREE.TorusGeometry(.92,.115,8,28,Math.PI),plaster);
+    arch.rotation.z=0;
+    arch.position.set(x,7.12,front+.52);
+    g.add(arch);
+    box(g,.22,1.25,.25,x-.92,6.43,front+.48,plaster);
+    box(g,.22,1.25,.25,x+.92,6.43,front+.48,plaster);
+    box(g,.36,.24,.46,x,8.06,front+.58,warmTrim);
+    // Thin vertical window muntins and a real interior shadow.
+    box(g,.055,1.32,.12,x,6.35,front+.47,plaster);
+    box(g,1.55,.055,.12,x,6.35,front+.47,plaster);
+  }
+  for(const x of [-3.16,3.16]){
+    box(g,.18,2.8,.35,x-1.17,2.0,front+.48,plaster);
+    box(g,.18,2.8,.35,x+1.17,2.0,front+.48,plaster);
+    box(g,2.55,.24,.48,x,3.43,front+.46,plaster);
+    box(g,.07,2.0,.16,x,2.1,front+.50,warmTrim);
+    box(g,2.1,.07,.16,x,2.0,front+.50,warmTrim);
+  }
+  // Layered pediment and dentil molding create the ornate vintage silhouette.
+  box(g,10.48,.20,.75,0,7.68,front+.28,plaster);
+  for(let n=0;n<24;n++){
+    box(g,.22,.24,.35,-4.8+n*.417,7.48,front+.47,plaster);
+  }
+  box(g,10.42,.13,.60,0,4.48,front+.34,plaster);
+  for(let n=0;n<22;n++){
+    box(g,.19,.18,.26,-4.6+n*.44,4.34,front+.49,warmTrim);
+  }
+  // A deeper awning edge, shaped door steps, and matching curb.
+  box(g,9.5,.10,.16,0,3.28,front+1.95,plaster);
+  box(g,2.75,.14,1.05,0,.09,front+1.0,plaster);
+  // Real 3D ceramic planters and flowering shrubs at shop entrances.
+  for(const x of [-4.45,4.45]){
+    cylinder(g,.45,.32,.67,x,.34,front+1.86,mat('#bc8872'),16);
+    sphere(g,.56,x,1.00,front+1.86,mat('#809f7e'),[1,1.13,.9]);
+    for(let k=0;k<7;k++){
+      const a=k*2.39996;
+      sphere(g,.105,x+Math.cos(a)*.37,1.1+(k%3)*.16,front+1.88+Math.sin(a)*.33,mat(k%2?'#e5b3a8':'#f0d6c3'));
+    }
+  }
+  // 3D storefront props (differ by shop)
+  if(i===0){
+    // Coffee: outdoor tables, cup, planter, display board
+    [-3.4,3.4].forEach(xx=>{
+      cylinder(g,.70,.70,.09,xx,.77,front+3.3,palette.darkWood);
+      cylinder(g,.09,.1,1.3,xx,.40,front+3.3,palette.darkWood);
+      cylinder(g,.13,.12,.22,xx,.94,front+3.3,palette.ivory);
+      cylinder(g,.18,.18,.05,xx,1.04,front+3.3,palette.terracotta);
+      [-.95,.95].forEach(offset=>{
+        box(g,.82,.13,.65,xx+offset,.58,front+3.3,palette.terracotta);
+        box(g,.12,.75,.10,xx+offset,.21,front+3.3,palette.darkWood);
+      });
+    });
+    box(g,.95,1.37,.12,-1.8,.72,front+2.35,palette.darkWood);
+    box(g,.73,1.13,.14,-1.8,.72,front+2.45,mat('#607263'));
+  } else if(i===1){
+    // Books piled inside the windows; outdoor display with a stack
+    [-3.16,3.16].forEach(xx=>{
+      for(let j=0;j<7;j++){
+        const colors=['#c7978b','#d4c4a0','#9ea993','#d7aa80','#9c9d9e'];
+        box(g,.21, .6+((j*3)%5)*.13,.39,xx-.78+j*.26,1.45,front+.44,mat(colors[j%colors.length]));
+      }
+    });
+    box(g,1.20,.85,.83,-3.85,.43,front+2.2,palette.darkWood);
+    for(let k=0;k<5;k++){
+      box(g,.64,.08,.4,-3.85,.86+k*.09,front+2.2,mat(['#d5ab87','#bba78b','#a4b2a0','#c3a5a0','#e1c9a2'][k]));
+    }
+    [-1.4,1.4].forEach(x=>cylinder(g,.08,.11,1.1,x,.55,front+2.0,palette.gold));
+  } else {
+    [-3.2,3.2].forEach(x=>{
+      cylinder(g,.63,.43,.7,x,.44,front+2.18,mat('#b67a66'));
+      for(let j=0;j<5;j++){
+        sphere(g,.38,x+(j-2)*.2,1.0+(j%2)*.18,front+2.18,mat(j%2?'#8cae8b':'#a6b18e'),[.78,1.1,.7]);
+        sphere(g,.11,x+(j-2)*.21,1.30+(j%2)*.22,front+2.30,mat(j%2?'#dc9d99':'#eac0a0'));
+      }
+    });
+    box(g,1.9,.65,.8,3.7,.39,front+3.1,mat('#9a826a'));
+    for(let j=0;j<4;j++){
+      cylinder(g,.22,.17,.26,2.9+j*.45,.84,front+3.1,mat(['#cf9996','#b7b58d','#d3ba9c','#9eb2a9'][j]));
+    }
+  }
+  // Mesh at the door for world-space mouse picking
+  const doorPicker = box(g,2.5,3.4,.04,0,1.8,front+.62,new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}),false);
+  doorPicker.userData.storeIndex = i;
+  clickable.push(doorPicker);
+  return g;
+}
+stores.forEach(addStore);
+
 // Plaza: finite, walkable, stone-paved geometry.
 const ground = mat('#d5c0a7');
 box(scene,39,.75,27,0,-.43,4.1,ground,false);
@@ -231,6 +343,38 @@ const ocean = box(scene,190,.08,75,0,-.9,-55,mat('#94c4c5',.32),false);
 ocean.receiveShadow=false;
 const beach = box(scene,160,.30,12,0,-.74,-18,mat('#e8d4af'),false);
 beach.receiveShadow=false;
+function hill(x, width, height, z, color) {
+  const shape = new THREE.Shape();
+  shape.moveTo(-width/2,0);
+  shape.bezierCurveTo(-width*.30,height*.85,-width*.11,height*.67,0,height);
+  shape.bezierCurveTo(width*.20,height*.58,width*.32,height*.6,width/2,0);
+  shape.lineTo(-width/2,0);
+  const mesh = new THREE.Mesh(new THREE.ShapeGeometry(shape,16),new THREE.MeshBasicMaterial({color,side:THREE.DoubleSide,fog:true}));
+  mesh.position.set(x,-.4,z);scene.add(mesh);
+}
+hill(-53,77,15,-78,'#a8b6a9');hill(43,85,19,-84,'#a0b3a8');hill(6,65,11,-72,'#b4bdaa');
+function cloud(x,y,z,s=1){
+  const cloudMaterial = new THREE.MeshBasicMaterial({color:'#fff0df',transparent:true,opacity:.68,depthWrite:false});
+  for(let i=0;i<4;i++)sphere(scene,2.2,x+i*2*s,y+Math.sin(i*1.7)*.35,z,cloudMaterial,[s*.95,s*.28,s*.3],false);
+}
+cloud(-22,19,-43,1.5);cloud(24,17,-48,1.3);cloud(6,25,-58,2.0);
+
+function plant(x,z,size=1){
+  const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
+  cylinder(g,.46*size,.35*size,.78*size,0,.40*size,0,mat('#bf8c78'));
+  cylinder(g,.09*size,.12*size,.96*size,0,1.20*size,0,mat('#775e4c'));
+  const green=mat('#8fa68c');
+  sphere(g,.61*size,0,1.95*size,0,green,[1.1,1.05,.8]);
+  sphere(g,.46*size,-.35*size,1.72*size,.10*size,mat('#9daf91'));
+  sphere(g,.45*size,.34*size,1.76*size,.1*size,mat('#a1b29a'));
+}
+plant(-17.8,-5.1,1.0);plant(17.8,-5.1,1.1);
+plant(-17.7,8.1,.9);plant(17.8,8.2,.9);
+// Warm string lights on the street corners
+for(const x of [-17.4,17.4]){
+  cylinder(scene,.07,.1,5.6,x,2.8,-4.6,palette.darkWood);
+  sphere(scene,.27,x,5.54,-4.6,new THREE.MeshStandardMaterial({color:'#f7d6a2',emissive:'#e9b66a',emissiveIntensity:1.4}),[1,.9,1]);
+}
 function makePerson({name, skin, hair, clothes, pants, shoe, isDress}) {
   const root = new THREE.Group();
   const visual = new THREE.Group();
@@ -288,6 +432,13 @@ function makePerson({name, skin, hair, clothes, pants, shoe, isDress}) {
   scene.add(root);
   return {root,visual,arms,legs,shadow,velocityY:0,groundY:0};
 }
+// Coastal atmosphere: real depth behind the shops, not a photographic plane.
+const horizon=new THREE.Mesh(
+ new THREE.PlaneGeometry(160,38),
+ new THREE.MeshBasicMaterial({color:'#c6d9d5',side:THREE.DoubleSide})
+);
+horizon.position.set(0,15,-43);
+scene.add(horizon);
 const people = [
   makePerson({name:'Victoria',skin:'#dfb394',hair:'#59443e',clothes:'#d99590',pants:'#c8957a',shoe:'#80615c',isDress:true}),
   makePerson({name:'Connor',skin:'#d4aa8b',hair:'#665042',clothes:'#96afa0',pants:'#a79078',shoe:'#66534b',isDress:false})
@@ -374,7 +525,7 @@ viewport.addEventListener('pointermove',ev=>{
   const dx=ev.clientX-pointer.lastX,dy=ev.clientY-pointer.lastY;
   if(Math.hypot(ev.clientX-pointer.x,ev.clientY-pointer.y)>7)pointer.moved=true;
   if(pointer.moved && started && !overview && !dialog.open){
-    cameraYaw=THREE.MathUtils.clamp(cameraYaw-dx*.0035,-.42,.42);
+    cameraYaw=THREE.MathUtils.clamp(cameraYaw-dx*.0035,-.48,.48);
     cameraPitch=THREE.MathUtils.clamp(cameraPitch+dy*.004,.10,1.26);
   }
   pointer.lastX=ev.clientX;pointer.lastY=ev.clientY;
@@ -420,7 +571,7 @@ function updateMovement(dt,t){
     x/=length;z/=length;
     const speed=isDown('shift')?7.8:5.1;
     player.root.position.x=THREE.MathUtils.clamp(player.root.position.x+x*speed*dt,-17.15,17.15);
-    player.root.position.z=THREE.MathUtils.clamp(player.root.position.z+z*speed*dt,-5.65,10.2);
+    player.root.position.z=THREE.MathUtils.clamp(player.root.position.z+z*speed*dt,-5.7,10.2);
     const angle=Math.atan2(-x,-z);
     let diff=Math.atan2(Math.sin(angle-player.root.rotation.y),Math.cos(angle-player.root.rotation.y));
     player.root.rotation.y+=diff*Math.min(1,dt*13);
@@ -480,7 +631,7 @@ function tick(){
   if(started && !dialog.open)updateMovement(dt,t);
   updateCamera(dt);
   renderer.render(scene,camera);
-  frame++;
+  if(frame++===0)fallback.classList.add('ready');
 }
 renderer.setAnimationLoop(tick);
 function resize(){

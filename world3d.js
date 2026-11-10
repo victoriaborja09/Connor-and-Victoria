@@ -359,6 +359,72 @@ function cloud(x,y,z,s=1){
 }
 cloud(-22,19,-43,1.5);cloud(24,17,-48,1.3);cloud(6,25,-58,2.0);
 
+
+const sand=mat('#ead7b5'),sea=mat('#7bbbc0',.4),green=mat('#8bad81'),line=mat('#fff5e8');
+box(scene,115,.16,22,0,-.75,26,sand,false);
+box(scene,115,.13,80,0,-.84,78,sea,false);
+box(scene,115,.08,4,0,-.69,36,mat('#c5e5d9'),false);
+for(let i=0;i<22;i++)sphere(scene,1.1,-54+i*5.1,-.42,20+Math.sin(i)*1.3,sand,[2,.2,.8],false);
+const plank=mat('#cba98b'),rail=mat('#a37d62');
+box(scene,44,.25,3.5,0,-.25,12.3,rail,false);
+for(let i=0;i<42;i++)box(scene,.95,.04,3.4,-20.5+i,-.09,12.3,i%4?plank:rail,false);
+for(let x=-20;x<=20;x+=4)for(const z of [10.4,14.2])box(scene,.18,1.2,.18,x,.42,z,rail);
+for(const z of [10.4,14.2]){box(scene,41,.13,.13,0,.9,z,plank);box(scene,41,.09,.12,0,.48,z,plank)}
+const tennis=new THREE.Group();tennis.position.set(-30,0,0);scene.add(tennis);
+box(tennis,16,.22,27,0,-.3,0,green,false);
+box(tennis,11.4,.04,23.6,0,-.16,0,mat('#83aca6'),false);
+for(const x of [-5.7,0,5.7])box(tennis,.09,.055,23.6,x,-.12,0,line,false);
+for(const z of [-11.8,-6.3,6.3,11.8])box(tennis,11.4,.055,.09,0,-.12,z,line,false);
+for(const x of [-6.1,6.1])cylinder(tennis,.08,.08,1.45,x,.7,0,line);
+for(let x=-6;x<=6;x+=.4)box(tennis,.018,.95,.018,x,.62,0,line,false);
+for(let y=.2;y<1.2;y+=.2)box(tennis,12.2,.018,.02,0,y,0,line,false);
+box(tennis,12.2,.08,.09,0,1.16,0,line,false);
+const golf=new THREE.Group();golf.position.set(32,0,-2);scene.add(golf);
+box(golf,27,.20,36,0,-.28,0,green,false);
+for(let i=0;i<7;i++)sphere(golf,4,Math.sin(i*1.5)*6,-.15,-13+i*4.4,mat('#a8c994'),[1.6,.03,1.2],false);
+sphere(golf,4.5,2,-.1,-3,mat('#b4d59e'),[1.3,.025,1],false);
+for(const [x,z] of [[-8,-6],[8,6],[3,12]])sphere(golf,2.5,x,-.1,z,sand,[1.4,.03,.75],false);
+cylinder(golf,.05,.05,3.2,2,1.6,-3,line);
+const flag=new THREE.Mesh(new THREE.PlaneGeometry(1.2,.8),mat('#dba399',.9,{side:THREE.DoubleSide}));flag.position.set(2.65,2.8,-3);golf.add(flag);
+const club=new THREE.Group();club.position.set(44,0,-10);scene.add(club);
+box(club,7,4,4,0,2,0,mat('#f0e2cb'));
+roofGable(club,7.5,4.4,4.1,0,'#a77571');
+for(const x of [-2,2])framedWindow(club,x,2.2,2.15,1.1,1.4,palette.ivory,true);
+function cafe(x,z,color){
+ const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
+ cylinder(g,.7,.7,.1,0,.75,0,palette.darkWood);
+ cylinder(g,.07,.08,1.4,0,.38,0,palette.darkWood);
+ cylinder(g,.05,.05,3.3,0,1.75,0,palette.ivory);
+ const top=new THREE.Mesh(new THREE.ConeGeometry(1.6,.6,12),mat(color));top.position.y=3.3;g.add(top);
+ for(const dx of [-1.1,1.1]){box(g,.6,.13,.6,dx,.5,0,palette.terracotta);box(g,.12,.5,.12,dx,.24,0,palette.darkWood)}
+}
+cafe(-22,6.5,'#d6a5a2');cafe(22,6.5,'#e6cfb2');
+for(const x of [-16,-9,9,16]){
+ box(scene,2,.16,.6,x,.55,9.5,palette.darkWood);
+ box(scene,2,.55,.12,x,.95,9.25,palette.darkWood);
+ for(const dx of [-.8,.8])box(scene,.12,.6,.13,x+dx,.25,9.5,palette.darkWood);
+}
+function palm(x,z,h=1){
+ const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
+ cylinder(g,.16*h,.25*h,4.3*h,0,2.1*h,0,mat('#b99a75'));
+ for(let i=0;i<8;i++){
+  const a=i*Math.PI/4;
+  const leaf=sphere(g,1.5*h,Math.cos(a)*1.3*h,4.4*h,Math.sin(a)*1.3*h,mat(i%2?'#7f9e7d':'#95b28a'),[1.45,.15,.35]);
+  leaf.rotation.y=-a;
+ }
+}
+for(const [x,z,h] of [[-20,17,1],[20,17,1],[-46,12,1.1],[-47,-13,1.2],[46,11,1.1],[48,-14,1.2],[-25,-17,.9],[26,-18,.9]])palm(x,z,h);
+function mountain(x,z,w,h,color){
+ const vertices=[];const y=i=>h*(.28+.72*Math.abs(Math.sin(i*1.12+2.2)*Math.cos(i*.4+.4)));
+ for(let i=0;i<16;i++){
+  const x0=x-w/2+i*w/16,x1=x-w/2+(i+1)*w/16;
+  vertices.push(x0,0,z,x1,0,z,x0,y(i),z,x1,0,z,x1,y(i+1),z,x0,y(i),z);
+ }
+ const geo=new THREE.BufferGeometry();
+ geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geo.computeVertexNormals();
+ scene.add(new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color,side:THREE.DoubleSide})));
+}
+mountain(-48,-110,105,24,'#9baeb1');mountain(48,-112,112,28,'#a9b6ac');
 function plant(x,z,size=1){
   const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
   cylinder(g,.46*size,.35*size,.78*size,0,.40*size,0,mat('#bf8c78'));

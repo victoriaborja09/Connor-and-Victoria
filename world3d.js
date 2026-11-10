@@ -678,8 +678,8 @@ function updateCamera(dt){
   const desiredPos = new THREE.Vector3();
   const aim=new THREE.Vector3();
   if(overview||!started){
-    desiredPos.set(0,mobile?31:20.7,mobile?54:35);
-    aim.set(0,3.6,-8.6);
+    desiredPos.set(0,mobile?46:36,mobile?83:67);
+    aim.set(0,2.6,5.0);
   }else{
     const dist=distance*(mobile?1.15:1);
     desiredPos.set(focus.x+Math.sin(cameraYaw)*dist,focus.y+2.1+Math.sin(cameraPitch)*dist*.63,focus.z+Math.cos(cameraYaw)*dist);

@@ -14,3 +14,13 @@
 /* The storefront illustration is rendered as a world-space 3D facade, not DOM art. */
 .viewport{touch-action:none;cursor:grab}.viewport:active{cursor:grabbing}
 @media(max-width:800px){.touch-controls{display:flex}}
+
+/* Unmistakable four-way mobile D-pad, including portrait iPad layouts. */
+.touch-controls{display:grid!important;grid-template-columns:repeat(3,56px);grid-template-rows:repeat(2,56px);gap:6px;align-items:center;justify-items:stretch;bottom:max(24px,env(safe-area-inset-bottom));left:18px}
+.touch-controls>button[data-move="up"]{display:block!important;grid-column:2;grid-row:1;width:56px;height:56px}
+.touch-controls>div{display:contents!important}
+.touch-controls button[data-move="left"]{display:block!important;grid-column:1;grid-row:2}
+.touch-controls button[data-move="down"]{display:block!important;grid-column:2;grid-row:2}
+.touch-controls button[data-move="right"]{display:block!important;grid-column:3;grid-row:2}
+.touch-controls button{width:56px!important;height:56px!important;font-size:25px}
+@media(hover:hover) and (pointer:fine) and (min-width:801px){.touch-controls{display:none!important}}

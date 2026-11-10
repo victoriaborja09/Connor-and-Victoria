@@ -40,7 +40,7 @@ viewport.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color('#cfdfda');
-scene.fog = new THREE.Fog('#d7d7c9', 70, 145);
+scene.fog = new THREE.Fog('#c7dfe0', 95, 190);
 const camera = new THREE.PerspectiveCamera(54, viewport.clientWidth / viewport.clientHeight, 0.12, 200);
 camera.position.set(0, 24, 39);
 const target = new THREE.Vector3(0, 3.3, -8.7);
@@ -324,7 +324,7 @@ stores.forEach(addStore);
 
 // Plaza: finite, walkable, stone-paved geometry.
 const ground = mat('#d5c0a7');
-box(scene,39,.75,27,0,-.43,4.1,ground,false);
+box(scene,52,.75,36,0,-.43,7.0,ground,false);
 box(scene,39,.3,1.25,0,.02,-6.3,palette.earth,false);
 const pavement = ['#dbc9af','#e6d3bb','#d2bca5','#e5cfb5','#d9c3ac','#ddc7b2'].map(color => mat(color));
 let seed = 42;
@@ -361,16 +361,16 @@ cloud(-22,19,-43,1.5);cloud(24,17,-48,1.3);cloud(6,25,-58,2.0);
 
 
 const sand=mat('#ead7b5'),sea=mat('#7bbbc0',.4),green=mat('#8bad81'),line=mat('#fff5e8');
-box(scene,115,.16,22,0,-.75,26,sand,false);
-box(scene,115,.13,80,0,-.84,78,sea,false);
-box(scene,115,.08,4,0,-.69,36,mat('#c5e5d9'),false);
-for(let i=0;i<22;i++)sphere(scene,1.1,-54+i*5.1,-.42,20+Math.sin(i)*1.3,sand,[2,.2,.8],false);
+box(scene,115,.16,22,0,-.75,38,sand,false);
+box(scene,115,.13,80,0,-.84,90,sea,false);
+box(scene,115,.08,4,0,-.69,48,mat('#c5e5d9'),false);
+for(let i=0;i<22;i++)sphere(scene,1.1,-54+i*5.1,-.42,34+Math.sin(i)*1.3,sand,[2,.2,.8],false);
 const plank=mat('#cba98b'),rail=mat('#a37d62');
 box(scene,44,.25,3.5,0,-.25,12.3,rail,false);
 for(let i=0;i<42;i++)box(scene,.95,.04,3.4,-20.5+i,-.09,12.3,i%4?plank:rail,false);
 for(let x=-20;x<=20;x+=4)for(const z of [10.4,14.2])box(scene,.18,1.2,.18,x,.42,z,rail);
 for(const z of [10.4,14.2]){box(scene,41,.13,.13,0,.9,z,plank);box(scene,41,.09,.12,0,.48,z,plank)}
-const tennis=new THREE.Group();tennis.position.set(-30,0,0);scene.add(tennis);
+const tennis=new THREE.Group();tennis.position.set(-66,0,-33);scene.add(tennis);
 box(tennis,16,.22,27,0,-.3,0,green,false);
 box(tennis,11.4,.04,23.6,0,-.16,0,mat('#83aca6'),false);
 for(const x of [-5.7,0,5.7])box(tennis,.09,.055,23.6,x,-.12,0,line,false);
@@ -379,14 +379,14 @@ for(const x of [-6.1,6.1])cylinder(tennis,.08,.08,1.45,x,.7,0,line);
 for(let x=-6;x<=6;x+=.4)box(tennis,.018,.95,.018,x,.62,0,line,false);
 for(let y=.2;y<1.2;y+=.2)box(tennis,12.2,.018,.02,0,y,0,line,false);
 box(tennis,12.2,.08,.09,0,1.16,0,line,false);
-const golf=new THREE.Group();golf.position.set(32,0,-2);scene.add(golf);
+const golf=new THREE.Group();golf.position.set(73,0,-43);scene.add(golf);
 box(golf,27,.20,36,0,-.28,0,green,false);
 for(let i=0;i<7;i++)sphere(golf,4,Math.sin(i*1.5)*6,-.15,-13+i*4.4,mat('#a8c994'),[1.6,.03,1.2],false);
 sphere(golf,4.5,2,-.1,-3,mat('#b4d59e'),[1.3,.025,1],false);
 for(const [x,z] of [[-8,-6],[8,6],[3,12]])sphere(golf,2.5,x,-.1,z,sand,[1.4,.03,.75],false);
 cylinder(golf,.05,.05,3.2,2,1.6,-3,line);
 const flag=new THREE.Mesh(new THREE.PlaneGeometry(1.2,.8),mat('#dba399',.9,{side:THREE.DoubleSide}));flag.position.set(2.65,2.8,-3);golf.add(flag);
-const club=new THREE.Group();club.position.set(44,0,-10);scene.add(club);
+const club=new THREE.Group();club.position.set(85,0,-53);scene.add(club);
 box(club,7,4,4,0,2,0,mat('#f0e2cb'));
 roofGable(club,7.5,4.4,4.1,0,'#a77571');
 for(const x of [-2,2])framedWindow(club,x,2.2,2.15,1.1,1.4,palette.ivory,true);
@@ -425,6 +425,75 @@ function mountain(x,z,w,h,color){
  scene.add(new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color,side:THREE.DoubleSide})));
 }
 mountain(-48,-110,105,24,'#9baeb1');mountain(48,-112,112,28,'#a9b6ac');
+
+// A layered village, not three isolated buildings. Winding lanes connect
+// secondary buildings and gardens; real volumes remain visible when looking around.
+const laneStone=mat('#c7b39b'),laneEdge=mat('#e9d8bf');
+function lane(x,z,w,d,angle=0){
+ const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=angle;scene.add(g);
+ box(g,w,.10,d,0,-.035,0,laneStone,false);
+ for(let n=0;n<Math.floor(d/1.8);n++){
+  const zz=-d/2+n*1.8+.9;
+  box(g,w,.014,.035,0,.025,zz,laneEdge,false);
+ }
+}
+lane(-26,1.0,6,41,-.13);lane(26,1.0,6,41,.13);
+lane(0,23,52,5,0);
+function villageHouse(x,z,rot,wallColor,roofColor,scale=1){
+ const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=rot;g.scale.setScalar(scale);scene.add(g);
+ const plaster=mat(wallColor),roof=mat(roofColor);
+ box(g,8,6.8,6.4,0,3.4,0,plaster);
+ roofGable(g,8.7,7.1,6.85,0,roofColor);
+ box(g,2.1,3.25,.22,0,1.63,3.3,palette.darkWood);
+ box(g,1.82,2.9,.08,0,1.55,3.45,mat('#799b9d',.3));
+ for(const x of [-2.55,2.55]){
+  framedWindow(g,x,4.9,3.35,1.45,1.9,palette.ivory,true);
+  framedWindow(g,x,2.05,3.35,1.5,1.65,palette.ivory,false);
+ }
+ box(g,8.7,.20,.55,0,6.45,3.15,palette.ivory);
+ for(const x of [-3.9,3.9])box(g,.32,6.2,.42,x,3.2,3.35,palette.ivory);
+ const step=box(g,2.8,.22,1.5,0,.1,4.1,laneEdge);
+ for(const px of [-3.6,3.6]){
+  cylinder(g,.45,.32,.8,px,.4,4.5,mat('#b88874'));
+  sphere(g,.65,px,1.05,4.5,mat('#7d9f81'));
+ }
+ return g;
+}
+// Turn side streets into layered alleyways, not a line of identical facades.
+villageHouse(-34,-18,.35,'#f3d8bf','#b87e71',.9);
+villageHouse(-39,1,1.15,'#c2d4c8','#9b8278',1.1);
+villageHouse(-33,18,1.75,'#e9c5b5','#a97c69',.88);
+villageHouse(34,-18,-.35,'#f0dcc5','#b37f75',.96);
+villageHouse(40,1,-1.1,'#b6cfce','#987c73',1.04);
+villageHouse(34,18,-1.8,'#e4c6aa','#ae796e',.9);
+// A coastal overlook between the village and beach.
+box(scene,53,.25,3.5,0,-.19,25,mat('#b89a7e'),false);
+for(let x=-25;x<=25;x+=3.3){
+ box(scene,.14,1.18,.14,x,.48,26.4,palette.ivory);
+}
+box(scene,52,.12,.13,0,1.0,26.4,palette.ivory);
+box(scene,52,.09,.13,0,.54,26.4,palette.ivory);
+// Garden walls, flowerbeds and shade trees around side streets.
+for(const side of [-1,1]){
+ for(let n=0;n<6;n++){
+  const x=side*(29+n%2*5),z=-22+n*8;
+  cylinder(scene,.19,.28,4.8,x,2.35,z,mat('#937a60'));
+  sphere(scene,2.15,x,5.15,z,mat(n%2?'#7d9e7c':'#8aaf8d'),[1.25,.7,1.15]);
+  sphere(scene,1.1,x+1.1,4.65,z+.4,mat('#a3b995'),[1,.8,1]);
+ }
+}
+// Hills form a stepped landscape with actual 3D mass, not a single image plane.
+for(let i=0;i<11;i++){
+ const x=-105+i*21;
+ const height=12+(i%4)*5;
+ const hill=new THREE.Mesh(
+  new THREE.ConeGeometry(18,height,7),
+  mat(i%3===0?'#8ca69c':i%3===1?'#9db2a8':'#a8b8a7')
+ );
+ hill.position.set(x,height*.47,-94-(i%3)*11);
+ hill.rotation.y=i*.32;
+ hill.castShadow=false;scene.add(hill);
+}
 function plant(x,z,size=1){
   const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
   cylinder(g,.46*size,.35*size,.78*size,0,.40*size,0,mat('#bf8c78'));
@@ -591,7 +660,7 @@ viewport.addEventListener('pointermove',ev=>{
   const dx=ev.clientX-pointer.lastX,dy=ev.clientY-pointer.lastY;
   if(Math.hypot(ev.clientX-pointer.x,ev.clientY-pointer.y)>7)pointer.moved=true;
   if(pointer.moved && started && !overview && !dialog.open){
-    cameraYaw=THREE.MathUtils.clamp(cameraYaw-dx*.0035,-.48,.48);
+    cameraYaw-=dx*.0035;
     cameraPitch=THREE.MathUtils.clamp(cameraPitch+dy*.004,.10,1.26);
   }
   pointer.lastX=ev.clientX;pointer.lastY=ev.clientY;
@@ -636,8 +705,8 @@ function updateMovement(dt,t){
     const length=Math.hypot(x,z);
     x/=length;z/=length;
     const speed=isDown('shift')?7.8:5.1;
-    player.root.position.x=THREE.MathUtils.clamp(player.root.position.x+x*speed*dt,-17.15,17.15);
-    player.root.position.z=THREE.MathUtils.clamp(player.root.position.z+z*speed*dt,-5.7,10.2);
+    player.root.position.x=THREE.MathUtils.clamp(player.root.position.x+x*speed*dt,-24.0,24.0);
+    player.root.position.z=THREE.MathUtils.clamp(player.root.position.z+z*speed*dt,-5.7,23.0);
     const angle=Math.atan2(-x,-z);
     let diff=Math.atan2(Math.sin(angle-player.root.rotation.y),Math.cos(angle-player.root.rotation.y));
     player.root.rotation.y+=diff*Math.min(1,dt*13);
@@ -646,8 +715,8 @@ function updateMovement(dt,t){
   applyLocomotion(player,moving,t,dt);
   // Companion trails behind the selected character and turns naturally.
   const offsetX=selected===0?-1.30:1.30;
-  const buddyX=THREE.MathUtils.clamp(player.root.position.x+offsetX,-17,17);
-  const buddyZ=THREE.MathUtils.clamp(player.root.position.z+1.10,-5.55,10.1);
+  const buddyX=THREE.MathUtils.clamp(player.root.position.x+offsetX,-23.8,23.8);
+  const buddyZ=THREE.MathUtils.clamp(player.root.position.z+1.10,-5.55,22.8);
   const bdx=buddyX-buddy.root.position.x,bdz=buddyZ-buddy.root.position.z;
   const follow=Math.hypot(bdx,bdz)>0.45;
   if(follow&&!dialog.open){
@@ -677,9 +746,9 @@ function updateCamera(dt){
   camera.updateProjectionMatrix();
   const desiredPos = new THREE.Vector3();
   const aim=new THREE.Vector3();
-  if(overview||!started){
-    desiredPos.set(0,mobile?46:36,mobile?83:67);
-    aim.set(0,2.6,5.0);
+  if(overview){
+    desiredPos.set(0,mobile?29:26,mobile?45:46);
+    aim.set(0,2.5,-1.0);
   }else{
     const dist=distance*(mobile?1.15:1);
     desiredPos.set(focus.x+Math.sin(cameraYaw)*dist,focus.y+2.1+Math.sin(cameraPitch)*dist*.63,focus.z+Math.cos(cameraYaw)*dist);

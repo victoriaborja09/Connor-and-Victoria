@@ -12,7 +12,7 @@
 </head>
 <body>
   <main class="world-app" id="app">
-    <div id="viewport" class="viewport" role="application" aria-label="Illustrated seaside boardwalk with 3D walking characters. Use left and right arrow keys or A and D to walk.">
+    <div id="viewport" class="viewport" role="application" aria-label="Bounded 3D boardwalk with third-person camera. Use WASD to walk, drag to look up or down, and scroll to zoom.">
       <div class="scene-fallback" id="fallback">
         <img src="./assets/storefront-scene.webp" alt="The original illustrated town, with a coffee shop, bookstore, and hobby shop.">
         <p id="fallback-status">Preparing your 3D town…</p>
@@ -26,7 +26,7 @@
     <section class="intro" id="intro" aria-label="World introduction">
       <span class="intro-kicker">A LITTLE PLACE, JUST OURS</span>
       <h1>Where shall we<br><em>go today?</em></h1>
-      <p>Walk along our original illustrated boardwalk with Victoria and Connor. Every storefront has a story.</p>
+      <p>Explore our original seaside town in 3D. Walk along the boardwalk, look up at the sky, and discover the three shops.</p>
       <button class="primary-button" type="button" id="start">Let's explore <span aria-hidden="true">↗</span></button>
     </section>
     <div class="top-actions" id="top-actions">
@@ -34,10 +34,10 @@
       <button class="pill" type="button" id="switch" aria-label="Switch walking character">⇄ <span>Playing as Victoria</span></button>
     </div>
     <div id="store-hint" class="store-hint" hidden><span class="hint-icon" aria-hidden="true">✦</span><div><small>YOU'VE FOUND</small><strong id="near-name">The bookstore</strong></div><button id="enter-store" type="button">Explore <span aria-hidden="true">↗</span></button></div>
-    <div class="controls-hint" id="controls-hint"><span class="keys" aria-hidden="true"><kbd>←</kbd><kbd>→</kbd></span><span>Walk along the boardwalk</span><span class="sep">·</span><span><kbd>A</kbd> / <kbd>D</kbd> also work</span></div>
+    <div class="controls-hint" id="controls-hint"><span class="keys" aria-hidden="true"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span><span>to walk</span><span class="sep">·</span><span>Drag to look up or down</span><span class="sep">·</span><span>Scroll to zoom</span></div>
     <div class="touch-controls" id="touch-controls" aria-label="Touch movement controls">
       
-      <div><button type="button" data-move="left" aria-label="Move left">←</button><button type="button" data-move="right" aria-label="Move right">→</button></div>
+      <button type="button" data-move="up" aria-label="Move forward">↑</button><div><button type="button" data-move="left" aria-label="Move left">←</button><button type="button" data-move="down" aria-label="Move backward">↓</button><button type="button" data-move="right" aria-label="Move right">→</button></div>
     </div>
     <dialog id="store-dialog" class="store-dialog">
       <button id="close-dialog" class="dialog-close" type="button" aria-label="Close shop">×</button>

@@ -2,11 +2,11 @@
 
 An interactive, editable scrapbook landing page built with **HTML, CSS, and JavaScript**, matching the user's original reference photos. No bundler, design subscription, or AI credits needed.
 
-## Bounded 3D boardwalk (preview)
+## Playable modeled 3D village
 
-Visit `world3d.html` for a perspective Three.js environment with **actual 3D boardwalk, two articulated 3D walking characters, camera tilt, limited side-to-side camera yaw, zoom, and finite world boundaries**. Walk with WASD or arrows; drag to look up/down or slightly left/right; scroll to zoom. Mobile has a four-direction D-pad. Switch characters, toggle town overview, and approach a store to explore its placeholder content.
+Visit `boardwalk-3d.html` for the latest 3D prototype. The storefronts are **individual Three.js geometry** with volumetric plaster walls, doors, window frames, awnings, cornices, sculpted arches, rooflines, flower planters, and street props. The original illustration is the artistic reference, **not a photograph or flat plane in the 3D scene**. The storefront facades have shallow depth, and the camera has limited yaw so unmodeled backs are not exposed. The two characters and walkable plaza are fully 3D.
 
-The **original approved `assets/storefront-scene.webp` artwork** is used as the visible front-only world-space facade behind the walkable 3D ground. This preserves the storefront art instead of replacing it with generic procedural buildings. The sides and backs of the stores are intentionally not modeled; camera yaw is bounded to the playable frontage. The facades are presently projected artwork rather than individually sculpted meshes; this is a visual prototype, not yet the final detailed 3D architecture. The original `index.html` remains unchanged.
+Walk with WASD or arrows; on mobile use the four-way D-pad. Drag to look up or down and slightly left or right, and scroll to zoom. Store dialogs remain placeholders. This is a first custom modeled pass, not an exact sculptural reproduction of the illustration. The original `index.html` and illustration are preserved.
 
 ## Run locally
 

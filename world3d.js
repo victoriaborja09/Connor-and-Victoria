@@ -775,4 +775,4 @@ function resize(){
   camera.aspect=w/h;camera.updateProjectionMatrix();
 }
 window.addEventListener('resize',resize);
-setOverview(true);
+setOverview(false);

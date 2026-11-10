@@ -2,15 +2,11 @@
 
 An interactive, editable scrapbook landing page built with **HTML, CSS, and JavaScript**, matching the user's original reference photos. No bundler, design subscription, or AI credits needed.
 
-## Playable illustrated boardwalk (preview)
+## Bounded 3D boardwalk (preview)
 
-Open `world3d.html` (or `/Connor-and-Victoria/world3d.html` on GitHub Pages). This preview preserves the original `assets/storefront-scene.webp` **pixel for pixel**, including all three storefronts, signage, awnings, mountains, and sea. The artwork is a fixed perspective, not a freely rotating 3D environment.
+Visit `world3d.html` for a perspective Three.js environment with **actual 3D boardwalk, two articulated 3D walking characters, camera tilt, limited side-to-side camera yaw, zoom, and finite world boundaries**. Walk with WASD or arrows; drag to look up/down or slightly left/right; scroll to zoom. Mobile has a four-direction D-pad. Switch characters, toggle town overview, and approach a store to explore its placeholder content.
 
-Victoria and Connor are **real, animated Three.js 3D meshes** composited over the original illustration. Use **left/right arrows** or **A/D** to walk along the bounded boardwalk, and use the on-screen left/right buttons on touchscreens. The other character follows. **View town** reveals the full original illustration; **Return to street** returns to the walkable close-up. Switch between the characters using the top-right control. Approach a store and press **E** or click **Explore** to open its placeholder content. In overview, the three storefronts can be clicked directly.
-
-The 3D avatars are early prototypes and not yet a final artistic match to the illustrated town. The storefronts are **not 3D meshes**: this is an intentional 2.5D composition to preserve the original design. No interior has been implemented yet. The original `index.html` and its existing street navigation remain unchanged. The page loads version-pinned Three.js from jsDelivr and needs WebGL/network access.
-
-To preview locally, run `python3 -m http.server 8000` and visit `http://localhost:8000/world3d.html`.
+The **original approved `assets/storefront-scene.webp` artwork** is used as the visible front-only world-space facade behind the walkable 3D ground. This preserves the storefront art instead of replacing it with generic procedural buildings. The sides and backs of the stores are intentionally not modeled; camera yaw is bounded to the playable frontage. The facades are presently projected artwork rather than individually sculpted meshes; this is a visual prototype, not yet the final detailed 3D architecture. The original `index.html` remains unchanged.
 
 ## Run locally
 

@@ -2,6 +2,22 @@
 
 An interactive, editable scrapbook landing page built with **HTML, CSS, and JavaScript**, matching the user's original reference photos. No bundler, design subscription, or AI credits needed.
 
+## New: playable 3D coastal town (preview)
+
+**Open `world3d.html`** alongside the existing approved `index.html`. The original page and `assets/storefront-scene.webp` are unchanged. On GitHub Pages the preview route is `/Connor-and-Victoria/world3d.html`.
+
+This is an actual **Three.js/WebGL** world with 3D mesh storefronts and animated 3D characters, not a flat background with SVG overlays. It includes:
+
+- Three modeled seaside shops, stone-paved plaza, ocean and hills, signs and 3D storefront props.
+- Play as Victoria or Connor, with the other character following; animated legs/arms, facial details, hair and necks.
+- **WASD / arrows** to walk, **Shift** to walk faster, **Space** to jump, **drag** to rotate the third-person camera, **scroll** to zoom.
+- On-screen directional buttons on touch devices, **View town** / **Return to street**, and clickable store fronts. Walk to a doorway and press **E** or tap **Explore** to open its content panel.
+- Bounded movement and responsive viewing; browser-only and no game server.
+
+The 3D buildings use the original scene's **three-shop arrangement and color palette**, but are a newly constructed geometry interpretation, not a pixel-exact model of the 2D illustration. Shop interiors and travel content are intentionally placeholders. The UI links back to the original. Three.js is loaded from the version-pinned jsDelivr CDN and requires WebGL and network access.
+
+To preview locally, serve the folder with `python3 -m http.server 8000` and visit `http://localhost:8000/world3d.html`. No bundler needed.
+
 ## Run locally
 
 Open `index.html` in your browser, or serve the folder locally:
@@ -31,7 +47,7 @@ The navigation frames lift on hover. Everything remains blank until the user sup
 
 ## Deploy
 
-This source lives in `victoriaborja09/Connor-and-Victoria`, a private repository. For free personal hosting, import this repo into Vercel (Hobby) or a similar static host and deploy from `main`; no build command is necessary. Static hosting does **not** make the page private; only deploy after choosing whether it may be publicly accessible. Do not upload private travel data to the static site.
+This source lives in `victoriaborja09/Connor-and-Victoria`, which is currently a public repository. For free personal hosting, import this repo into Vercel (Hobby) or a similar static host and deploy from `main`; no build command is necessary. Static hosting does **not** make the page private; only deploy after choosing whether it may be publicly accessible. Do not upload private travel data to the static site.
 
 **Important:** The in-browser editor is currently *local-only* and not access-controlled. Any visitor with access to the site can open Edit Mode, but changes remain isolated to their browser. Private shared editing will require Supabase Auth and row-level security.
 
